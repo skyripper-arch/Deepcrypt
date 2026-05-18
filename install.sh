@@ -6,8 +6,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN_DIR="$SCRIPT_DIR/binaries"
-INSTALL_DIR="$HOME/.local/bin"
-PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
 
 # ── Platform detection ───────────────────────────────────────────────────────
 case "$(uname -s)" in
@@ -38,42 +36,47 @@ fi
 chmod +x "$BINARY_PATH"
 echo "[dpc] $BINARY_NAME marked executable."
 
-# ── Symlink into ~/.local/bin ────────────────────────────────────────────────
+# ── Pick install dir: Termux gets $PREFIX/bin (already in PATH) ──────────────
+if [ -n "${TERMUX_VERSION:-}" ] || echo "${PREFIX:-}" | grep -q "com.termux"; then
+  INSTALL_DIR="$PREFIX/bin"
+  IS_TERMUX=1
+else
+  INSTALL_DIR="$HOME/.local/bin"
+  IS_TERMUX=0
+fi
+
 mkdir -p "$INSTALL_DIR"
 ln -sf "$BINARY_PATH" "$INSTALL_DIR/dpc"
 echo "[dpc] Linked -> $INSTALL_DIR/dpc"
 
-# ── Ensure ~/.local/bin is in PATH (auto-add to shell profiles) ──────────────
-ADDED_TO=""
+# ── For non-Termux: ensure ~/.local/bin is in PATH in shell profiles ─────────
+if [ "$IS_TERMUX" -eq 0 ]; then
+  PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
+  ADDED_TO=""
 
-for PROFILE in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
-  # Only touch profiles that already exist
-  [ -f "$PROFILE" ] || continue
-  # Skip if the line is already there
-  grep -qF '.local/bin' "$PROFILE" && continue
-  echo "" >> "$PROFILE"
-  echo "# Added by deepcrypt installer" >> "$PROFILE"
-  echo "$PATH_LINE" >> "$PROFILE"
-  ADDED_TO="$ADDED_TO $PROFILE"
-done
+  for PROFILE in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+    [ -f "$PROFILE" ] || continue
+    grep -qF '.local/bin' "$PROFILE" && continue
+    echo "" >> "$PROFILE"
+    echo "# Added by deepcrypt installer" >> "$PROFILE"
+    echo "$PATH_LINE" >> "$PROFILE"
+    ADDED_TO="$ADDED_TO $PROFILE"
+  done
 
-# If no profile existed yet, create ~/.bashrc
-if [ -z "$ADDED_TO" ] && ! echo ":${PATH}:" | grep -q ":${INSTALL_DIR}:"; then
-  echo "" >> "$HOME/.bashrc"
-  echo "# Added by deepcrypt installer" >> "$HOME/.bashrc"
-  echo "$PATH_LINE" >> "$HOME/.bashrc"
-  ADDED_TO=" $HOME/.bashrc"
+  if [ -z "$ADDED_TO" ] && ! echo ":${PATH}:" | grep -q ":${INSTALL_DIR}:"; then
+    echo "" >> "$HOME/.bashrc"
+    echo "# Added by deepcrypt installer" >> "$HOME/.bashrc"
+    echo "$PATH_LINE" >> "$HOME/.bashrc"
+    ADDED_TO=" $HOME/.bashrc"
+  fi
+
+  if [ -n "$ADDED_TO" ]; then
+    echo "[dpc] Added \$HOME/.local/bin to PATH in:$ADDED_TO"
+    echo ""
+    echo "[dpc] Reload your shell to use 'dpc' directly:"
+    echo "        source ~/.bashrc"
+  fi
 fi
 
-if [ -n "$ADDED_TO" ]; then
-  echo "[dpc] Added \$HOME/.local/bin to PATH in:$ADDED_TO"
-fi
-
-# ── Apply PATH for the current session ──────────────────────────────────────
-export PATH="$INSTALL_DIR:$PATH"
-
 echo ""
-echo "[dpc] Installation complete!"
-echo ""
-echo "  Run now (current shell):  $INSTALL_DIR/dpc --version"
-echo "  After opening a new terminal:  dpc --version"
+echo "[dpc] Installation complete! Run: dpc --version"
