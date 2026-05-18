@@ -15,8 +15,8 @@ func newDecryptCmd() *cobra.Command {
 	var password string
 
 	c := &cobra.Command{
-		Use:   "decrypt <file.dcp>",
-		Short: "Decrypt a .dcp file using the paired .key file",
+		Use:   "decrypt <file.dpec>",
+		Short: "Decrypt a .dpec file using the paired .key file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// If no password flag was given, check whether the key file needs one

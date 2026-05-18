@@ -37,7 +37,7 @@ type EncryptResult struct {
 	WasDir   bool
 }
 
-// encryptTarget encrypts a file or directory and writes a .dcp + .key pair.
+// encryptTarget encrypts a file or directory and writes a .dpec + .key pair.
 // password may be empty if the user has not enabled password protection.
 func encryptTarget(target, algoName string, b64Flag bool, password string) (*EncryptResult, error) {
 	target = strings.Trim(target, `"' `)
@@ -161,8 +161,8 @@ func encryptTarget(target, algoName string, b64Flag bool, password string) (*Enc
 	}
 
 	// Output paths.
-	// Files keep their original extension in the .dcp name so decryption can
-	// restore it by stripping ".dcp" (e.g. video.mp4 → video.mp4.dcp → video.mp4).
+	// Files keep their original extension in the .dpec name so decryption can
+	// restore it by stripping ".dpec" (e.g. video.mp4 → video.mp4.dpec → video.mp4).
 	var baseName string
 	var originalName string // stored in the key file for reliable extension recovery
 	if isDir {
@@ -172,13 +172,13 @@ func encryptTarget(target, algoName string, b64Flag bool, password string) (*Enc
 		originalName = baseName
 	}
 	dir := filepath.Dir(target)
-	dcpPath := filepath.Join(dir, baseName+".dcp")
+	dcpPath := filepath.Join(dir, baseName+".dpec")
 	keyPath := filepath.Join(dir, baseName+".key")
 
-	// Write .dcp.
+	// Write .dpec.
 	dcpFile, err := os.Create(dcpPath)
 	if err != nil {
-		return nil, fmt.Errorf("create .dcp: %w", err)
+		return nil, fmt.Errorf("create .dpec: %w", err)
 	}
 	defer dcpFile.Close()
 
@@ -222,17 +222,17 @@ type DecryptResult struct {
 	WasDir      bool
 }
 
-// decryptTarget decrypts a .dcp file using the paired .key file.
+// decryptTarget decrypts a .dpec file using the paired .key file.
 // password may be empty; ErrPasswordRequired is returned when the key file
 // needs a password but none was provided.
 func decryptTarget(dcpPath, keyPath, password string) (*DecryptResult, error) {
 	dcpPath = strings.Trim(dcpPath, `"' `)
 	keyPath = strings.Trim(keyPath, `"' `)
 
-	// Parse .dcp header.
+	// Parse .dpec header.
 	dcpFile, err := os.Open(dcpPath)
 	if err != nil {
-		return nil, fmt.Errorf("open .dcp: %w", err)
+		return nil, fmt.Errorf("open .dpec: %w", err)
 	}
 	defer dcpFile.Close()
 
@@ -269,7 +269,7 @@ func decryptTarget(dcpPath, keyPath, password string) (*DecryptResult, error) {
 	}
 
 	if keyFile.AlgoID != hdr.AlgoID {
-		return nil, fmt.Errorf("key algo (%s) does not match .dcp algo (%s)",
+		return nil, fmt.Errorf("key algo (%s) does not match .dpec algo (%s)",
 			format.AlgoName(keyFile.AlgoID), format.AlgoName(hdr.AlgoID))
 	}
 
@@ -289,16 +289,16 @@ func decryptTarget(dcpPath, keyPath, password string) (*DecryptResult, error) {
 	}
 
 	// Determine output filename.
-	// Priority: OriginalName from key file → strip ".dcp" from the .dcp filename.
-	// Both methods preserve the original extension (e.g. video.mp4.dcp → video.mp4).
+	// Priority: OriginalName from key file → strip ".dpec" from the .dpec filename.
+	// Both methods preserve the original extension (e.g. video.mp4.dpec → video.mp4).
 	outDir := filepath.Dir(dcpPath)
 	var outBase string
 	isArchive := hdr.Flags&format.FlagIsDir != 0
 	if !isArchive && keyFile.OriginalName != "" {
 		outBase = filepath.Join(outDir, keyFile.OriginalName)
 	} else {
-		// Strip exactly one ".dcp" suffix.
-		stripped := strings.TrimSuffix(filepath.Base(dcpPath), ".dcp")
+		// Strip exactly one ".dpec" suffix.
+		stripped := strings.TrimSuffix(filepath.Base(dcpPath), ".dpec")
 		outBase = filepath.Join(outDir, stripped)
 	}
 

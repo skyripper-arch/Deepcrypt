@@ -1,12 +1,12 @@
 // Package crypto implements all Deepcrypt cipher suites and dispatches
-// encrypt/decrypt calls based on the algorithm ID from the .dcp header.
+// encrypt/decrypt calls based on the algorithm ID from the .dpec header.
 package crypto
 
 import "fmt"
 
 // EncryptResult carries everything produced during encryption.
-// Nonce   → stored verbatim in the .dcp header (24 bytes).
-// Payload → written as the .dcp body.
+// Nonce   → stored verbatim in the .dpec header (24 bytes).
+// Payload → written as the .dpec body.
 // KeyData → written to the .key file.
 //   Symmetric (AES, ChaCha, Twofish, Blowfish, 3DES, DES, B64, Luac): Argon2id salt (16 bytes).
 //   Asymmetric (RSA, ECC, PQC): serialised private key.
@@ -50,8 +50,8 @@ func Encrypt(algoID byte, derivedKey, plaintext []byte) (*EncryptResult, error) 
 
 // Decrypt dispatches to the correct cipher.
 // derivedKey: re-derived Argon2id key — used by all symmetric ciphers.
-// nonce:      24-byte nonce field from the .dcp header (also carries CBC IVs).
-// payload:    raw (already base64-decoded) .dcp body.
+// nonce:      24-byte nonce field from the .dpec header (also carries CBC IVs).
+// payload:    raw (already base64-decoded) .dpec body.
 // keyData:    contents of the .key file (salt for symmetric, private key for asymmetric).
 func Decrypt(algoID byte, derivedKey, nonce, payload, keyData []byte) ([]byte, error) {
 	switch algoID {

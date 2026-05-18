@@ -19,7 +19,7 @@ func newEncryptCmd() *cobra.Command {
 
 	c := &cobra.Command{
 		Use:   "encrypt <path>",
-		Short: "Encrypt a file or folder → <name>.dcp + <name>.key",
+		Short: "Encrypt a file or folder → <name>.dpec + <name>.key",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// If no --password flag was given, check settings and prompt on a terminal.
@@ -62,7 +62,7 @@ func newEncryptCmd() *cobra.Command {
 	}
 
 	c.Flags().StringVar(&algo, "algo", "aes", "Cipher suite: aes|chacha|rsa|ecc|pqc|twofish|blowfish|3des|des|b64|luac")
-	c.Flags().BoolVar(&b64, "b64", false, "Base64-encode the .dcp payload")
+	c.Flags().BoolVar(&b64, "b64", false, "Base64-encode the .dpec payload")
 	c.Flags().StringVar(&password, "password", "", "Encryption password (stored in key derivation, not on disk)")
 	return c
 }

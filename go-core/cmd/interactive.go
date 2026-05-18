@@ -96,7 +96,7 @@ func runInteractive() {
 			Height(7).
 			Options(
 				huh.NewOption("🔒  Encrypt  — protect a file or folder", "encrypt"),
-				huh.NewOption("🔓  Decrypt  — restore from a .dcp file", "decrypt"),
+				huh.NewOption("🔓  Decrypt  — restore from a .dpec file", "decrypt"),
 				huh.NewOption("🧪  Test     — verify all cipher suites", "test"),
 				huh.NewOption("⚙   Settings — machine lock & password", "settings"),
 				huh.NewOption("✕   Exit", "exit"),
@@ -238,13 +238,13 @@ func interactiveDecrypt() {
 	var dcpPath, keyPath string
 	err := newForm(
 		huh.NewInput().
-			Title("  Path to the .dcp file").
+			Title("  Path to the .dpec file").
 			Description("Drag & drop the encrypted file into the terminal").
-			Placeholder(`C:\Users\you\secret.dcp`).
+			Placeholder(`C:\Users\you\secret.dpec`).
 			Value(&dcpPath),
 		huh.NewInput().
 			Title("  Path to the .key file").
-			Description("The key file produced alongside the .dcp").
+			Description("The key file produced alongside the .dpec").
 			Placeholder(`C:\Users\you\secret.key`).
 			Value(&keyPath),
 	).Run()

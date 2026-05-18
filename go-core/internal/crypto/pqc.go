@@ -98,7 +98,7 @@ func decryptPQC(skBytes, nonce24, payload []byte) ([]byte, error) {
 
 	ss, err := scheme.Decapsulate(sk, kemCT)
 	if err != nil {
-		return nil, fmt.Errorf("PQC: decapsulate failed — key file may not match this .dcp: %w", err)
+		return nil, fmt.Errorf("PQC: decapsulate failed — key file may not match this .dpec: %w", err)
 	}
 	if len(ss) < 32 {
 		return nil, fmt.Errorf("PQC: decapsulated secret too short (%d bytes)", len(ss))

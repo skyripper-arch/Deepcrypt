@@ -2,7 +2,7 @@ node_modules/
 go-core/vendor/
 go-core/go.sum
 go-core/*.exe
-go-core/*.dcp
+go-core/*.dpec
 *.dpec
 *.key
 .env

@@ -30,7 +30,7 @@ func printBanner() {
 	fmt.Println()
 	fmt.Println(bannerDim.Render("  ╔══════════════════════════════════════════════════╗"))
 	fmt.Println(bannerDim.Render("  ║") + styleInfo.Render("  POST-QUANTUM FILE ENCRYPTION ENGINE             ") + bannerDim.Render("║"))
-	fmt.Println(bannerDim.Render("  ║") + styleDim.Render("  HWID-Bound  ·  Argon2id KDF  ·  .dcp format    ") + bannerDim.Render("║"))
+	fmt.Println(bannerDim.Render("  ║") + styleDim.Render("  HWID-Bound  ·  Argon2id KDF  ·  .dpec format   ") + bannerDim.Render("║"))
 	fmt.Println(bannerDim.Render("  ╚══════════════════════════════════════════════════╝"))
 	fmt.Println()
 }
@@ -46,7 +46,7 @@ var rootCmd = &cobra.Command{
 			runInteractive()
 		} else {
 			fmt.Fprintln(os.Stderr, "  Usage: dpc encrypt <path> --algo <suite>")
-			fmt.Fprintln(os.Stderr, "         dpc decrypt <file.dcp> --key <file.key>")
+			fmt.Fprintln(os.Stderr, "         dpc decrypt <file.dpec> --key <file.key>")
 			fmt.Fprintln(os.Stderr, "         dpc test")
 			fmt.Fprintln(os.Stderr, "         dpc --help")
 		}

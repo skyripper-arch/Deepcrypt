@@ -111,7 +111,7 @@ func DecodeMlck(data []byte) (*MLCKBlock, error) {
 	return blk, nil
 }
 
-// Header is the fixed 30-byte prefix of every .dcp file.
+// Header is the fixed 30-byte prefix of every .dpec file.
 type Header struct {
 	AlgoID  byte
 	Flags   byte
@@ -135,7 +135,7 @@ func ReadHeader(r io.Reader) (*Header, error) {
 		return nil, fmt.Errorf("format: read header: %w", err)
 	}
 	if !bytes.Equal(buf[:4], []byte(Magic)) {
-		return nil, fmt.Errorf("format: invalid magic — not a .dcp file")
+		return nil, fmt.Errorf("format: invalid magic — not a .dpec file")
 	}
 	h := &Header{AlgoID: buf[4], Flags: buf[5]}
 	copy(h.Nonce[:], buf[6:])
