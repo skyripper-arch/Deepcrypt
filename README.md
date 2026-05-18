@@ -33,6 +33,10 @@
   sudo npm install -g skyripper-arch/Deepcrypt
 
   Termux (Android)
+   cd deepcrypt
+  git pull
+  bash install.sh
+  dpc --version
 
   pkg install nodejs
   npm install -g skyripper-arch/Deepcrypt
