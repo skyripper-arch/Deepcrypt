@@ -17,7 +17,10 @@
 
   ---
 
-  ## Installation
+  ## Installation universal git
+git clone https://github.com/skyripper-arch/Deepcrypt
+cd deepcrypt 
+bash install.sh
 
   ### Windows
 
