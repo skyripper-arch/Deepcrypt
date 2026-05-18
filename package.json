@@ -1,0 +1,43 @@
+{
+  "name": "@skyripper/deepcrypt",
+  "version": "2.3.0",
+  "description": "High-performance, ultra-secure file and folder encryption CLI — HWID-bound, post-quantum capable.",
+  "main": "lib/runner.js",
+  "bin": {
+    "dpc": "bin/dpc.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "scripts/",
+    "binaries/"
+  ],
+  "keywords": [
+    "encryption",
+    "security",
+    "cryptography",
+    "aes",
+    "chacha20",
+    "post-quantum",
+    "cli",
+    "deepcrypt"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "os": [
+    "win32",
+    "linux",
+    "darwin",
+    "android"
+  ],
+  "cpu": [
+    "x64",
+    "arm64",
+    "arm"
+  ],
+  "license": "MIT"
+}
