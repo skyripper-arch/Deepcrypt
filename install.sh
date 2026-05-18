@@ -7,6 +7,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN_DIR="$SCRIPT_DIR/binaries"
 INSTALL_DIR="$HOME/.local/bin"
+PATH_LINE="export PATH=\"\$HOME/.local/bin:\$PATH\""
 
 # ── Platform detection ───────────────────────────────────────────────────────
 case "$(uname -s)" in
@@ -42,16 +43,37 @@ mkdir -p "$INSTALL_DIR"
 ln -sf "$BINARY_PATH" "$INSTALL_DIR/dpc"
 echo "[dpc] Linked -> $INSTALL_DIR/dpc"
 
-# ── PATH check ───────────────────────────────────────────────────────────────
-if ! echo ":${PATH}:" | grep -q ":${INSTALL_DIR}:"; then
-  echo ""
-  echo "[dpc] '$INSTALL_DIR' is not in your PATH."
-  echo "      Add this line to your shell profile (~/.bashrc, ~/.zshrc, etc.):"
-  echo ""
-  echo "        export PATH=\"\$HOME/.local/bin:\$PATH\""
-  echo ""
-  echo "      Then reload it:  source ~/.bashrc   (or open a new terminal)"
+# ── Ensure ~/.local/bin is in PATH (auto-add to shell profiles) ──────────────
+ADDED_TO=""
+
+for PROFILE in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+  # Only touch profiles that already exist
+  [ -f "$PROFILE" ] || continue
+  # Skip if the line is already there
+  grep -qF '.local/bin' "$PROFILE" && continue
+  echo "" >> "$PROFILE"
+  echo "# Added by deepcrypt installer" >> "$PROFILE"
+  echo "$PATH_LINE" >> "$PROFILE"
+  ADDED_TO="$ADDED_TO $PROFILE"
+done
+
+# If no profile existed yet, create ~/.bashrc
+if [ -z "$ADDED_TO" ] && ! echo ":${PATH}:" | grep -q ":${INSTALL_DIR}:"; then
+  echo "" >> "$HOME/.bashrc"
+  echo "# Added by deepcrypt installer" >> "$HOME/.bashrc"
+  echo "$PATH_LINE" >> "$HOME/.bashrc"
+  ADDED_TO=" $HOME/.bashrc"
 fi
 
+if [ -n "$ADDED_TO" ]; then
+  echo "[dpc] Added \$HOME/.local/bin to PATH in:$ADDED_TO"
+fi
+
+# ── Apply PATH for the current session ──────────────────────────────────────
+export PATH="$INSTALL_DIR:$PATH"
+
 echo ""
-echo "[dpc] Installation complete. Run: dpc --version"
+echo "[dpc] Installation complete!"
+echo ""
+echo "  Run now (current shell):  $INSTALL_DIR/dpc --version"
+echo "  After opening a new terminal:  dpc --version"
