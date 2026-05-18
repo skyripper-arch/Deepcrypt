@@ -100,6 +100,4 @@
   ---
   License
 
-  MIT — see LICENSE for details.
-
-  Free to use, modify, and distribute. No warranty provided.
+  Apache 2.0 — see LICENSE for details.
