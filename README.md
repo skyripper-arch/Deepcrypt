@@ -11,7 +11,7 @@
   post-quantum cryptography
   - **HWID-bound keys** — derived from hardware identifiers via Argon2id, making keys machine-specific
   - **Cross-platform** — native Go binaries for Windows, Linux, macOS (x64 + ARM64), and 32-bit ARM (Termux)
-  - **`.dpec` file format** — structured encrypted output with embedded algorithm metadata
+  - **`.dpc` file format** — structured encrypted output with embedded algorithm metadata
   - **Base64 output** — optional `--b64` flag for text-safe encoded output
   - **Self-updating** — built-in `dpc update` command
 
